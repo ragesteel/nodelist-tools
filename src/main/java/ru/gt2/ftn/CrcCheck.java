@@ -20,12 +20,16 @@ public class CrcCheck {
     }
 
     /** Проверяет CRC и возвращает true, если совпадает */
-    public boolean verifyCRC(InputStream inputStream) throws IOException {
+    public CheckResult verifyCrc(InputStream inputStream) throws IOException {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             String header = br.readLine();
-            if (header == null) throw new IOException("Empty file");
+            if (header == null) {
+                throw new IOException("Empty file");
+            }
             int expectedCRC = Crc16.extractCRC(header);
-            if (expectedCRC < 0) throw new IOException("Cannot extract CRC from header");
+            if (expectedCRC < 0) {
+                throw new IOException("Cannot extract CRC from header");
+            }
 
             Crc16 crc = new Crc16(charset);
             String line;
@@ -37,7 +41,7 @@ public class CrcCheck {
             }
             int calculatedCRC = crc.getCrc();
             System.out.printf("Expected CRC: %05d, Calculated CRC: %05d%n", expectedCRC, calculatedCRC);
-            return calculatedCRC == expectedCRC;
+            return new CheckResult(calculatedCRC == expectedCRC, header);
         }
     }
 
@@ -47,7 +51,7 @@ public class CrcCheck {
             System.err.println("Usage: java NodelistCRCChecker <NODELIST.nnn>");
             System.exit(1);
         }
-        boolean ok = new CrcCheck(NLConsts.CP_866).verifyCRC(new FileInputStream(args[0]));
+        boolean ok = new CrcCheck(NLConsts.CP_866).verifyCrc(new FileInputStream(args[0])).valid();
         System.out.println(ok ? "CRC OK" : "CRC mismatch!");
     }
 }
