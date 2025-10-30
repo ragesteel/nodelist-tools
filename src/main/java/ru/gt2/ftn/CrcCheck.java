@@ -30,10 +30,10 @@ public class CrcCheck {
             Crc16 crc = new Crc16(charset);
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.equals("\u001A")) {
+                if (line.equals(NLConsts.END_OF_FILE)) {
                     break;
                 }
-                crc.updateCrcLine(line + "\r\n");
+                crc.updateCrcLine(line + NLConsts.CRLF);
             }
             int calculatedCRC = crc.getCrc();
             System.out.printf("Expected CRC: %05d, Calculated CRC: %05d%n", expectedCRC, calculatedCRC);

@@ -3,20 +3,6 @@ package ru.gt2.ftn;
 import java.io.*;
 import java.nio.charset.Charset;
 
-/**
- Реализация FTS-5000.005 §6 — применение NODEDIFF к NODELIST.
- Формат NODEDIFF:
- ┌ первая строка — копия заголовка предыдущего NODELIST
- ├ команды: A<n>, D<n>, C<n>
- └ строки данных после A<n>
-
- Команды:
- A n — добавить следующие n строк в выходной файл
- D n — удалить n строк из входного файла
- C n — скопировать n строк из входного файла
-
- CRC-16-CCITT (poly 0x1021, init 0x0000) считается с 2-й строки нового NODELIST включительно (т.е. без заголовка).
- */
 public class NodeDiffApplier {
 
     private final Charset charset;
@@ -38,7 +24,6 @@ public class NodeDiffApplier {
         }
     }
 
-    // пример запуска
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
             System.err.println("Usage: java NodeDiffApplier <oldlist> <nodediff> <newlist>");

@@ -2,6 +2,7 @@ package ru.gt2.ftn;
 
 import java.nio.charset.Charset;
 
+/// CRC-16-CCITT (poly 0x1021, init 0x0000)
 public class Crc16 {
     /// таблица CRC-16/CCITT
     private static final int[] CRC_TABLE = new int[256];

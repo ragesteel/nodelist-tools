@@ -7,6 +7,18 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+/**
+ Реализация FTS-5000.005 §6 — применение NODEDIFF к NODELIST.
+ Формат NODEDIFF:
+ ┌ первая строка — копия заголовка предыдущего NODELIST
+ ├ команды: A<n>, D<n>, C<n>
+ └ строки данных после A<n>
+
+ Команды:
+ A n — добавить следующие n строк в выходной файл
+ D n — удалить n строк из входного файла
+ C n — скопировать n строк из входного файла
+ */
 public class DiffProcessor {
     private final BufferedReader oldReader;
     private final BufferedReader diffReader;
