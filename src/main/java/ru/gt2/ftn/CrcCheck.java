@@ -1,9 +1,10 @@
 package ru.gt2.ftn;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
@@ -12,17 +13,21 @@ import java.nio.charset.Charset;
  Вычисляется со второй строки, включая все символы CR/LF.
  */
 public class CrcCheck {
-    private static final Charset CHARSET = Charset.forName("CP866");
+    private final Charset charset;
+
+    public CrcCheck(Charset charset) {
+        this.charset = charset;
+    }
 
     /** Проверяет CRC и возвращает true, если совпадает */
-    public static boolean verifyCRC(File nodelist) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(nodelist, CHARSET))) {
+    public boolean verifyCRC(InputStream inputStream) throws IOException {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             String header = br.readLine();
             if (header == null) throw new IOException("Empty file");
             int expectedCRC = Crc16.extractCRC(header);
             if (expectedCRC < 0) throw new IOException("Cannot extract CRC from header");
 
-            Crc16 crc = new Crc16(CHARSET);
+            Crc16 crc = new Crc16(charset);
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.equals("\u001A")) {
@@ -42,7 +47,7 @@ public class CrcCheck {
             System.err.println("Usage: java NodelistCRCChecker <NODELIST.nnn>");
             System.exit(1);
         }
-        boolean ok = verifyCRC(new File(args[0]));
+        boolean ok = new CrcCheck(NLConsts.CP_866).verifyCRC(new FileInputStream(args[0]));
         System.out.println(ok ? "CRC OK" : "CRC mismatch!");
     }
 }
