@@ -22,6 +22,17 @@ public class Crc16 {
         this.charset = charset;
     }
 
+    /** Извлекает CRC из первой строки (после последнего ':') */
+    static int extractCRC(String header) {
+        int colon = header.lastIndexOf(':');
+        if (colon < 0 || colon + 1 >= header.length()) return -1;
+        try {
+            return Integer.parseInt(header.substring(colon + 1).trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
     /**
      * обновление CRC-16 CCITT на одной строке (с CRLF)
      */

@@ -63,7 +63,7 @@ public class NodeDiffApplier {
                             added += CRLF;
                             if (firstAdded) {
                                 firstAdded = false;
-                                expectedCRC = extractCRC(added);
+                                expectedCRC = Crc16.extractCRC(added);
                             } else {
                                 crc.updateCrcLine(added);
                             }
@@ -108,17 +108,6 @@ public class NodeDiffApplier {
             if (expectedCRC >= 0 && (calculatedCrc != expectedCRC)) {
                 throw new IOException(String.format("CRC mismatch: expected %05d, got %05d", expectedCRC, calculatedCrc));
             }
-        }
-    }
-
-    /// Извлечь CRC контрольную сумму из первой добавленной строки
-    private static int extractCRC(String header) {
-        int colon = header.lastIndexOf(':');
-        if (colon < 0 || colon + 1 >= header.length()) return -1;
-        try {
-            return Integer.parseInt(header.substring(colon + 1).trim());
-        } catch (NumberFormatException e) {
-            return -1;
         }
     }
 
